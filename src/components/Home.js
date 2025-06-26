@@ -2,12 +2,15 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import ProductCard from './ProductCard';
 import { fetchCart } from '../store/actions/cartActions';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -17,8 +20,8 @@ const Home = () => {
       const response = await fetch('http://localhost:5000/api/products', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -50,6 +53,11 @@ const Home = () => {
       return acc;
     }, {});
   }, [products]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   if (loading) {
     return (
@@ -84,6 +92,17 @@ const Home = () => {
   return (
     <div className="bg-light min-vh-100 py-5 w-100">
       <div className="container">
+        {/* User Info & Logout Button */}
+        <div className="mb-4 d-flex justify-content-between align-items-center">
+          <h4 className="mb-0">
+            Welcome, <span className="text-primary">{user?.name || 'Guest'}</span>!
+          </h4>
+          <button className="btn btn-outline-danger" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+
+        {/* Products Display */}
         {Object.keys(groupedProducts).length === 0 ? (
           <div className="text-center py-5">
             <div className="mb-4">

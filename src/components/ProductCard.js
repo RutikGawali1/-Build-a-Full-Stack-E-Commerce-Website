@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/actions/cartActions';
+import { Link } from 'react-router-dom';
 
 const ProductCard = React.memo(({ product }) => {
   const dispatch = useDispatch();
@@ -18,7 +19,6 @@ const ProductCard = React.memo(({ product }) => {
 
   const handleAddToCart = useCallback(async () => {
     if (isAdding || loading) return;
-
     setIsAdding(true);
     try {
       await dispatch(addToCart(product, 1));
@@ -40,13 +40,15 @@ const ProductCard = React.memo(({ product }) => {
   return (
     <div className="card h-100 shadow-sm border-0">
       <div className="position-relative overflow-hidden">
-        <img
-          src={productImage}
-          alt={productName}
-          className="card-img-top"
-          style={{ height: '200px', objectFit: 'cover' }}
-          onError={handleImageError}
-        />
+        <Link to={`/product/${product._id}`}>
+          <img
+            src={productImage}
+            alt={productName}
+            className="card-img-top"
+            style={{ height: '200px', objectFit: 'cover' }}
+            onError={handleImageError}
+          />
+        </Link>
         {cartQuantity > 0 && (
           <span className="badge bg-success position-absolute top-0 end-0 m-2">
             In Cart: {cartQuantity}
@@ -55,7 +57,9 @@ const ProductCard = React.memo(({ product }) => {
       </div>
 
       <div className="card-body d-flex flex-column">
-        <h5 className="card-title text-truncate">{productName}</h5>
+        <Link to={`/product/${product._id}`} className="text-decoration-none text-dark">
+          <h5 className="card-title text-truncate">{productName}</h5>
+        </Link>
 
         {product.description && (
           <p className="card-text text-muted small text-truncate" style={{ maxHeight: '3em' }}>

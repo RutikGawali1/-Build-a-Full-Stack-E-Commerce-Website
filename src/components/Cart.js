@@ -47,63 +47,70 @@ const Cart = () => {
       ) : (
         <>
           <div className="row g-3 mb-4">
-            {items.map((item) => (
-              <div key={item._id} className="col-12">
-                <div className="card border-0 shadow-sm">
-                  <div className="card-body">
-                    <div className="row align-items-center">
-                      {/* Product Image */}
-                      <div className="col-md-2 col-3">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="img-fluid rounded"
-                          style={{ objectFit: 'cover', height: '60px', width: '60px' }}
-                        />
-                      </div>
+            {items.map((item) => {
+              const productId = item.product?._id || item._id;
+              const name = item.product?.name || item.name;
+              const image = item.product?.image || item.image;
+              const price = item.product?.price || item.price || 0;
 
-                      {/* Product Info */}
-                      <div className="col-md-6 col-9">
-                        <h6 className="mb-1">{item.name}</h6>
-                        <p className="text-muted small mb-0">${item.price} each</p>
-                      </div>
+              return (
+                <div key={productId} className="col-12">
+                  <div className="card border-0 shadow-sm">
+                    <div className="card-body">
+                      <div className="row align-items-center">
+                        {/* Product Image */}
+                        <div className="col-md-2 col-3">
+                          <img
+                            src={image}
+                            alt={name}
+                            className="img-fluid rounded"
+                            style={{ objectFit: 'cover', height: '60px', width: '60px' }}
+                          />
+                        </div>
 
-                      {/* Quantity Controls */}
-                      <div className="col-md-2 d-flex justify-content-center my-2 my-md-0">
-                        <div className="btn-group">
+                        {/* Product Info */}
+                        <div className="col-md-6 col-9">
+                          <h6 className="mb-1">{name}</h6>
+                          <p className="text-muted small mb-0">${price} each</p>
+                        </div>
+
+                        {/* Quantity Controls */}
+                        <div className="col-md-2 d-flex justify-content-center my-2 my-md-0">
+                          <div className="btn-group">
+                            <button
+                              className="btn btn-sm btn-outline-secondary"
+                              onClick={() => handleQuantityChange(productId, item.quantity - 1)}
+                            >
+                              <i className="fas fa-minus"></i>
+                            </button>
+                            <button className="btn btn-sm btn-outline-secondary" disabled>
+                              {item.quantity}
+                            </button>
+                            <button
+                              className="btn btn-sm btn-outline-secondary"
+                              onClick={() => handleQuantityChange(productId, item.quantity + 1)}
+                            >
+                              <i className="fas fa-plus"></i>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Total & Remove */}
+                        <div className="col-md-2 text-end">
+                          <p className="mb-1 fw-bold text-primary">${(price * item.quantity).toFixed(2)}</p>
                           <button
-                            className="btn btn-sm btn-outline-secondary"
-                            onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleRemoveItem(productId)}
                           >
-                            <i className="fas fa-minus"></i>
-                          </button>
-                          <button className="btn btn-sm btn-outline-secondary" disabled>
-                            {item.quantity}
-                          </button>
-                          <button
-                            className="btn btn-sm btn-outline-secondary"
-                            onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                          >
-                            <i className="fas fa-plus"></i>
+                            <i className="fas fa-trash"></i>
                           </button>
                         </div>
-                      </div>
-
-                      {/* Total & Remove */}
-                      <div className="col-md-2 text-end">
-                        <p className="mb-1 fw-bold text-primary">${(item.price * item.quantity)}</p>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleRemoveItem(item._id)}
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Summary */}
